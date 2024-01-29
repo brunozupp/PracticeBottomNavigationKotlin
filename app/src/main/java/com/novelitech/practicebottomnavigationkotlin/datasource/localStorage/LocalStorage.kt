@@ -6,10 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class LocalStorage<T>(
+class LocalStorage(
     private val activity: AppCompatActivity,
-) : ILocalStorage<T> {
-    override fun save(key: String, data: T) {
+) : ILocalStorage {
+    override fun<T> save(key: String, data: T) {
 
         try {
 
@@ -32,7 +32,7 @@ class LocalStorage<T>(
         }
     }
 
-    override fun getAll(key: String): T? {
+    override fun<T> get(key: String): T? {
         try {
 
             val sharedPreferences = activity.getSharedPreferences(KEY_LOCAL_STORAGE_APP, Context.MODE_PRIVATE)
