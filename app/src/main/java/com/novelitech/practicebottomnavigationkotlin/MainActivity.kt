@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.novelitech.practicebottomnavigationkotlin.databinding.ActivityMainBinding
 import com.novelitech.practicebottomnavigationkotlin.datasource.localStorage.LocalStorage
 import com.novelitech.practicebottomnavigationkotlin.repositories.profile.ProfileRepository
+import com.novelitech.practicebottomnavigationkotlin.repositories.settings.SettingsRepository
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +21,11 @@ class MainActivity : AppCompatActivity() {
 
         val resume = ResumeFragment()
 
-        val settings = SettingsFragment()
+        val settings = SettingsFragment(
+            settingsRepository = SettingsRepository(
+                LocalStorage(this)
+            )
+        )
 
         val profile = ProfileFragment(
             profileRepository = ProfileRepository(

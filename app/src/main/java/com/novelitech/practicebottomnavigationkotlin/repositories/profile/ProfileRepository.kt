@@ -9,6 +9,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
+import com.google.gson.reflect.TypeToken
 import com.novelitech.practicebottomnavigationkotlin.datasource.localStorage.ILocalStorage
 import java.io.ByteArrayOutputStream
 
@@ -61,7 +62,9 @@ class ProfileRepository(
 
         try {
 
-            val imageEncoded = localStorage.get<String>(KEY_IMAGE_PROFILE) ?: return null
+            val type = object : TypeToken<String>() {}.type
+
+            val imageEncoded = localStorage.get<String>(KEY_IMAGE_PROFILE, type) ?: return null
 
             val b = Base64.decode(imageEncoded, Base64.DEFAULT)
 

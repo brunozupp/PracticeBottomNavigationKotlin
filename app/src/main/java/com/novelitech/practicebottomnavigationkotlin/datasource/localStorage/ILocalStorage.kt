@@ -1,5 +1,7 @@
 package com.novelitech.practicebottomnavigationkotlin.datasource.localStorage
 
+import java.lang.reflect.Type
+
 interface ILocalStorage {
 
     val KEY_LOCAL_STORAGE_APP: String
@@ -7,5 +9,5 @@ interface ILocalStorage {
 
     fun<T> save(key: String, data: T)
 
-    fun<T> get(key: String) : T?
+    fun<T> get(key: String, type: Type) : T?
 }
