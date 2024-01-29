@@ -19,10 +19,9 @@ class ProfileRepository(
 
     private val KEY_IMAGE_PROFILE = "KEY_IMAGE_PROFILE"
 
-    override fun saveImage(uri: String, context: Context) {
+    override fun saveImage(uri: Uri, context: Context) {
 
         try {
-            val uriObject = Uri.parse(uri)
 
             var bitmap: Bitmap
 
@@ -30,12 +29,12 @@ class ProfileRepository(
 
                 bitmap = MediaStore.Images.Media.getBitmap(
                     context.contentResolver,
-                    uriObject
+                    uri
                 )
 
             } else {
 
-                val source = ImageDecoder.createSource(context.contentResolver, uriObject)
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
 
                 bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
                     decoder.setTargetSampleSize(1)

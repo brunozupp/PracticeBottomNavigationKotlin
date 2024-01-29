@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.novelitech.practicebottomnavigationkotlin.databinding.ActivityMainBinding
+import com.novelitech.practicebottomnavigationkotlin.datasource.localStorage.LocalStorage
+import com.novelitech.practicebottomnavigationkotlin.repositories.profile.ProfileRepository
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,8 +19,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val resume = ResumeFragment()
+
         val settings = SettingsFragment()
-        val profile = ProfileFragment()
+
+        val profile = ProfileFragment(
+            profileRepository = ProfileRepository(
+                LocalStorage(this)
+            )
+        )
 
         setCurrentFragment(resume)
 
