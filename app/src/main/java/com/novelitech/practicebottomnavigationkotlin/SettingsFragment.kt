@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.indices
 import com.novelitech.practicebottomnavigationkotlin.controllers.SettingsController
 import com.novelitech.practicebottomnavigationkotlin.dataClasses.Settings
 import com.novelitech.practicebottomnavigationkotlin.databinding.FragmentSettingsBinding
-import com.novelitech.practicebottomnavigationkotlin.repositories.settings.ISettingsRepository
 
 
 class SettingsFragment(
@@ -46,21 +46,36 @@ class SettingsFragment(
             selectedItemsId = getItemsIdSelected(),
         )
 
+        enableElements(false)
+
         controller.saveInLocalStorage(
             settings,
             onSuccess = {
-
                 activity?.runOnUiThread {
                     Toast.makeText(binding.root.context, "Saved settings", Toast.LENGTH_LONG).show()
+                    enableElements(true)
                 }
             },
             onError = { errorMessage ->
-
                 activity?.runOnUiThread {
                     Toast.makeText(binding.root.context, errorMessage, Toast.LENGTH_LONG).show()
+                    enableElements(true)
                 }
             }
         )
+    }
+
+    private fun enableElements(enabled: Boolean) {
+        binding.btnSave.isClickable = enabled
+        binding.btnSave.isEnabled = enabled
+
+        for(i in binding.rgOptions.indices) {
+            binding.rgOptions.getChildAt(i).isClickable = enabled
+        }
+
+        binding.cbItem1.isClickable = enabled
+        binding.cbItem2.isClickable = enabled
+        binding.cbItem3.isClickable = enabled
     }
 
     private fun getItemsIdSelected() : List<Int> {
@@ -76,23 +91,28 @@ class SettingsFragment(
 
     private fun getSettingsFromLocalStorage() {
 
+        enableElements(false)
+
         controller.getFromLocalStorage(
             onSuccess = {settings ->
 
-                if(settings == null) {
-                    return@getFromLocalStorage
-                }
-
                 activity?.runOnUiThread {
-                    binding.rgOptions.check(settings.selectedOptionId)
+                    enableElements(true)
 
-                    binding.cbItem1.isChecked = settings.selectedItemsId.contains(binding.cbItem1.id)
-                    binding.cbItem2.isChecked = settings.selectedItemsId.contains(binding.cbItem2.id)
-                    binding.cbItem3.isChecked = settings.selectedItemsId.contains(binding.cbItem3.id)
+                    if(settings != null) {
+                        binding.rgOptions.check(settings.selectedOptionId)
+
+                        binding.cbItem1.isChecked = settings.selectedItemsId.contains(binding.cbItem1.id)
+                        binding.cbItem2.isChecked = settings.selectedItemsId.contains(binding.cbItem2.id)
+                        binding.cbItem3.isChecked = settings.selectedItemsId.contains(binding.cbItem3.id)
+                    }
                 }
+
             },
             onError = {errorMessage ->
+
                 activity?.runOnUiThread {
+                    enableElements(true)
                     Toast.makeText(binding.root.context, errorMessage, Toast.LENGTH_LONG).show()
                 }
             }
