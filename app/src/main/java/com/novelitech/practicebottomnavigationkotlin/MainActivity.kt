@@ -3,6 +3,7 @@ package com.novelitech.practicebottomnavigationkotlin
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.novelitech.practicebottomnavigationkotlin.controllers.SettingsController
 import com.novelitech.practicebottomnavigationkotlin.databinding.ActivityMainBinding
 import com.novelitech.practicebottomnavigationkotlin.datasource.localStorage.LocalStorage
 import com.novelitech.practicebottomnavigationkotlin.repositories.profile.ProfileRepository
@@ -22,8 +23,10 @@ class MainActivity : AppCompatActivity() {
         val resume = ResumeFragment()
 
         val settings = SettingsFragment(
-            settingsRepository = SettingsRepository(
-                LocalStorage(this)
+            controller = SettingsController(
+                repository = SettingsRepository(
+                    LocalStorage(this)
+                )
             )
         )
 

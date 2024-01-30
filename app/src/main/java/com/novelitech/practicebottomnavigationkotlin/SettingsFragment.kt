@@ -6,13 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.novelitech.practicebottomnavigationkotlin.controllers.SettingsController
 import com.novelitech.practicebottomnavigationkotlin.dataClasses.Settings
 import com.novelitech.practicebottomnavigationkotlin.databinding.FragmentSettingsBinding
 import com.novelitech.practicebottomnavigationkotlin.repositories.settings.ISettingsRepository
 
 
 class SettingsFragment(
-    private val settingsRepository: ISettingsRepository
+    private val controller: SettingsController
 ) : Fragment() {
 
     private lateinit var binding: FragmentSettingsBinding
@@ -33,6 +34,7 @@ class SettingsFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         return binding.root
     }
@@ -44,7 +46,21 @@ class SettingsFragment(
             selectedItemsId = getItemsIdSelected(),
         )
 
-        settingsRepository.save(settings)
+        controller.saveInLocalStorage(
+            settings,
+            onSuccess = {
+
+                activity?.runOnUiThread {
+                    Toast.makeText(binding.root.context, "Saved settings", Toast.LENGTH_LONG).show()
+                }
+            },
+            onError = { errorMessage ->
+
+                activity?.runOnUiThread {
+                    Toast.makeText(binding.root.context, errorMessage, Toast.LENGTH_LONG).show()
+                }
+            }
+        )
     }
 
     private fun getItemsIdSelected() : List<Int> {
@@ -59,12 +75,27 @@ class SettingsFragment(
     }
 
     private fun getSettingsFromLocalStorage() {
-        val settings = settingsRepository.get() ?: return
 
-        binding.rgOptions.check(settings.selectedOptionId)
+        controller.getFromLocalStorage(
+            onSuccess = {settings ->
 
-        binding.cbItem1.isChecked = settings.selectedItemsId.contains(binding.cbItem1.id)
-        binding.cbItem2.isChecked = settings.selectedItemsId.contains(binding.cbItem2.id)
-        binding.cbItem3.isChecked = settings.selectedItemsId.contains(binding.cbItem3.id)
+                if(settings == null) {
+                    return@getFromLocalStorage
+                }
+
+                activity?.runOnUiThread {
+                    binding.rgOptions.check(settings.selectedOptionId)
+
+                    binding.cbItem1.isChecked = settings.selectedItemsId.contains(binding.cbItem1.id)
+                    binding.cbItem2.isChecked = settings.selectedItemsId.contains(binding.cbItem2.id)
+                    binding.cbItem3.isChecked = settings.selectedItemsId.contains(binding.cbItem3.id)
+                }
+            },
+            onError = {errorMessage ->
+                activity?.runOnUiThread {
+                    Toast.makeText(binding.root.context, errorMessage, Toast.LENGTH_LONG).show()
+                }
+            }
+        )
     }
 }
