@@ -3,6 +3,7 @@ package com.novelitech.practicebottomnavigationkotlin
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.novelitech.practicebottomnavigationkotlin.controllers.ProfileController
 import com.novelitech.practicebottomnavigationkotlin.controllers.SettingsController
 import com.novelitech.practicebottomnavigationkotlin.databinding.ActivityMainBinding
 import com.novelitech.practicebottomnavigationkotlin.datasource.localStorage.LocalStorage
@@ -31,8 +32,10 @@ class MainActivity : AppCompatActivity() {
         )
 
         val profile = ProfileFragment(
-            profileRepository = ProfileRepository(
-                LocalStorage(this)
+            controller = ProfileController(
+                repository = ProfileRepository(
+                    LocalStorage(this)
+                )
             )
         )
 

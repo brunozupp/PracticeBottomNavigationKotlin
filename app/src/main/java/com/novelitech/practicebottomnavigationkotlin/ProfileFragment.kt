@@ -2,7 +2,6 @@ package com.novelitech.practicebottomnavigationkotlin
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import com.novelitech.practicebottomnavigationkotlin.controllers.ProfileController
 import com.novelitech.practicebottomnavigationkotlin.databinding.FragmentProfileBinding
-import com.novelitech.practicebottomnavigationkotlin.repositories.profile.IProfileRepository
 
 class ProfileFragment(
-    private val profileRepository: IProfileRepository
+    private val controller: ProfileController
 ) : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
@@ -42,14 +41,12 @@ class ProfileFragment(
 
     private fun getPhotoFromGallery() {
 
-        val intentGallery = Intent(Intent.ACTION_GET_CONTENT).also {
-            it.type = "image/*"
-        }
-
-        launcherGallery.launch(intentGallery)
+        controller.getPhotoFromGallery(
+            launcher = launcher,
+        )
     }
 
-    private val launcherGallery = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
         if(result.resultCode == Activity.RESULT_OK) {
 
@@ -58,26 +55,38 @@ class ProfileFragment(
             val uri = intentData?.data
 
             if(uri != null) {
-                binding.photoView.setImageURI(uri)
 
-                saveImageInLocalStorage(uri)
+                controller.savePhotoInLocalStorage(
+                    uri = uri,
+                    context = requireContext(),
+                    onSuccess = {uri ->
+                        activity?.runOnUiThread {
+                            binding.photoView.setImageURI(uri)
+                        }
+                    },
+                    onError = {errorMessage ->
+                        activity?.runOnUiThread {
+                            Toast.makeText(this.context, errorMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                )
             }
-        }
-    }
-
-    private fun saveImageInLocalStorage(uri: Uri) {
-
-        if(context != null) {
-            profileRepository.saveImage(uri, requireContext())
         }
     }
 
     private fun getImageFromLocalStorage() {
 
-        val image = profileRepository.getImage()
-
-        if(image != null) {
-            binding.photoView.setImageBitmap(image)
-        }
+        controller.getPhotoInLocalStorage(
+            onSuccess = {bitmap ->
+                if(bitmap != null) {
+                    activity?.runOnUiThread {
+                        binding.photoView.setImageBitmap(bitmap)
+                    }
+                }
+            },
+            onError = {errorMessage ->
+                Toast.makeText(this.context, errorMessage, Toast.LENGTH_LONG).show()
+            }
+        )
     }
 }
