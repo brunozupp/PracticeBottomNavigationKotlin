@@ -2,6 +2,7 @@ package com.novelitech.practicebottomnavigationkotlin.repositories.settings
 
 import android.util.Log
 import com.google.gson.reflect.TypeToken
+import com.novelitech.practicebottomnavigationkotlin.core.exceptions.RepositoryException
 import com.novelitech.practicebottomnavigationkotlin.dataClasses.Settings
 import com.novelitech.practicebottomnavigationkotlin.datasource.localStorage.ILocalStorage
 
@@ -17,6 +18,8 @@ class SettingsRepository(
         } catch (e: Exception) {
 
             Log.d("SettingsRepository", "Error to save the Settings")
+
+            throw RepositoryException()
         }
     }
 
@@ -30,7 +33,8 @@ class SettingsRepository(
         } catch (e: Exception) {
 
             Log.d("SettingsRepository", "Error to retrieve the Settings")
-            Log.d("SettingsRepository", e.stackTraceToString())
+
+            throw RepositoryException()
         }
 
         return null

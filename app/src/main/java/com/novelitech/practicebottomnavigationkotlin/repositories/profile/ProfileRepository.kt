@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import com.google.gson.reflect.TypeToken
+import com.novelitech.practicebottomnavigationkotlin.core.exceptions.RepositoryException
 import com.novelitech.practicebottomnavigationkotlin.datasource.localStorage.ILocalStorage
 import java.io.ByteArrayOutputStream
 
@@ -55,6 +56,8 @@ class ProfileRepository(
         } catch (e: Exception) {
 
             Log.d("ProfileRepository", "Error to save profile's image")
+
+            throw RepositoryException()
         }
     }
 
@@ -73,6 +76,8 @@ class ProfileRepository(
         } catch (e: Exception) {
 
             Log.d("ProfileRepository", "Error to retrieve profile's image")
+
+            throw RepositoryException()
         }
 
         return null
